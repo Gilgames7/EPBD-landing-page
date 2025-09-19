@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaPrimeRénov - Liste Documents</title>
+    <meta name="description" content="Version corrigée - Export PDF filtré avec documents cochés seulement">
+    <meta name="theme-color" content="#22c55e">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="data:application/json,{
+        'name': 'MaPrimeRénov - Liste Documents',
+        'short_name': 'Documents MaPrimeRénov',
+        'description': 'Version corrigée - Export PDF filtré avec texte propre',
+        'start_url': '.',
+        'display': 'standalone',
+        'background_color': '#ffffff',
+        'theme_color': '#22c55e',
+        'orientation': 'portrait-primary',
+        'icons': [
+            {
+                'src': 'data:image/svg+xml,%3Csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 192 192\"%3E%3Crect fill=\"%2322c55e\" width=\"192\" height=\"192\" rx=\"20\"/%3E%3Ctext x=\"96\" y=\"110\" font-family=\"Arial\" font-size=\"90\" text-anchor=\"middle\" fill=\"white\"%3E📋%3C/text%3E%3C/svg%3E',
+                'sizes': '192x192',
+                'type': 'image/svg+xml'
+            },
+            {
+                'src': 'data:image/svg+xml,%3Csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 512 512\"%3E%3Crect fill=\"%2322c55e\" width=\"512\" height=\"512\" rx=\"50\"/%3E%3Ctext x=\"256\" y=\"300\" font-family=\"Arial\" font-size=\"200\" text-anchor=\"middle\" fill=\"white\"%3E📋%3C/text%3E%3C/svg%3E',
+                'sizes': '512x512',
+                'type': 'image/svg+xml'
+            }
+        ],
+        'categories': ['productivity', 'government']
+    }">
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect fill='%2322c55e' width='180' height='180' rx='20'/%3E%3Ctext x='90' y='105' font-family='Arial' font-size='80' text-anchor='middle' fill='white'%3E📋%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-brand">
+                <div class="logo">
+                    <div class="logo-icon">📄</div>
+                    <div class="logo-text">
+                        <div class="brand-name">MaPrimeRénov</div>
+                        <div class="app-title">Liste Documents - Version corrigée</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Countdown Timer -->
+            <div class="countdown-timer">
+                <div class="countdown-label" id="countdown-label">Réouverture dans</div>
+                <div class="countdown-display">
+                    <span class="countdown-item">
+                        <span id="days">--</span>
+                        <span class="countdown-unit">jours</span>
+                    </span>
+                    <span class="countdown-item">
+                        <span id="hours">--</span>
+                        <span class="countdown-unit">h</span>
+                    </span>
+                    <span class="countdown-item">
+                        <span id="minutes">--</span>
+                        <span class="countdown-unit">min</span>
+                    </span>
+                </div>
+                <div class="countdown-slots">13 000 créneaux nationaux disponibles</div>
+            </div>
+        </header>
+
+        <!-- Progress Section -->
+        <div class="progress-section">
+            <div class="progress-info">
+                <span class="progress-text">Documents préparés: <span id="progress-percentage">0</span>%</span>
+                <span class="progress-count">(<span id="completed-count">0</span>/<span id="total-count">0</span>)</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="phase-indicators">
+                <div class="phase-indicator" id="phase-avant">
+                    <span class="phase-name">AVANT</span>
+                    <span class="phase-count" id="avant-count">0/0</span>
+                </div>
+                <div class="phase-indicator" id="phase-pendant">
+                    <span class="phase-name">PENDANT</span>
+                    <span class="phase-count" id="pendant-count">0/0</span>
+                </div>
+                <div class="phase-indicator" id="phase-apres">
+                    <span class="phase-name">APRÈS</span>
+                    <span class="phase-count" id="apres-count">0/0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Install PWA Banner -->
+            <div class="pwa-install-banner hidden" id="pwa-banner">
+                <div class="pwa-banner-content">
+                    <span>📱 Ajouter à l'écran d'accueil pour accès rapide</span>
+                    <button class="btn btn--secondary btn--sm" id="install-button">Installer</button>
+                </div>
+            </div>
+
+            <!-- Phase Headers and Sections -->
+            <div class="checklist-container" id="checklist-container">
+                <!-- Sections will be dynamically generated -->
+            </div>
+
+            <!-- Export Section -->
+            <div class="export-section">
+                <button class="btn btn--primary btn--lg btn--full-width export-btn" id="export-btn">
+                    📄 Exporter Documents Cochés en PDF
+                </button>
+                <p class="export-hint">✅ Export PDF filtré - Seuls les documents cochés apparaîtront dans le PDF avec texte propre</p>
+            </div>
+
+            <!-- Save Indicator -->
+            <div class="save-indicator" id="save-indicator">
+                ✅ Sauvegarde automatique
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <div class="footer-contacts">
+                <p><strong>Contacts utiles MaPrimeRénov:</strong></p>
+                <p>📞 <a href="tel:0808800700">0 808 800 700</a> (France Rénov - gratuit)</p>
+                <p>🌐 <a href="https://maprimerenov.gouv.fr" target="_blank" rel="noopener noreferrer">maprimerenov.gouv.fr</a></p>
+                <p>👥 <a href="https://france-renov.gouv.fr/mon-accompagnateur-renov" target="_blank" rel="noopener noreferrer">Trouver un MAR</a></p>
+                <p>🔍 <a href="https://france-renov.gouv.fr/annuaires-professionnels/artisan-rge-architecte" target="_blank" rel="noopener noreferrer">Annuaire RGE</a></p>
+            </div>
+            <div class="footer-info">
+                <p>Version 2.1.0 - Export PDF filtré + texte corrigé</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
