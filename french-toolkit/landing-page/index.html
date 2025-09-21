@@ -274,7 +274,7 @@
             font-size: 20px;
         }
         
-        /* DOWNLOAD BUTTONS - ENHANCED */
+        /* DOWNLOAD BUTTONS - ENHANCED WITH DISABLED STATE */
         .download-section {
             margin: 40px 0;
         }
@@ -304,6 +304,15 @@
             box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3);
             position: relative;
             overflow: hidden;
+            opacity: 0.5;
+            pointer-events: none;
+            filter: grayscale(50%);
+        }
+        
+        .download-btn.active {
+            opacity: 1;
+            pointer-events: all;
+            filter: none;
         }
         
         .download-btn::before {
@@ -317,11 +326,11 @@
             transition: left 0.5s;
         }
         
-        .download-btn:hover::before {
+        .download-btn.active:hover::before {
             left: 100%;
         }
         
-        .download-btn:hover {
+        .download-btn.active:hover {
             background: #b91c1c;
             transform: translateY(-3px);
             box-shadow: 0 12px 30px rgba(220, 38, 38, 0.4);
@@ -1025,6 +1034,12 @@
         };
         
         function downloadTemplate(type) {
+            // Check if buttons are active
+            if (!document.querySelector('.download-btn').classList.contains('active')) {
+                showWarningMessage('⚠️ Veuillez d\'abord remplir le formulaire pour accéder aux templates gratuits.');
+                return;
+            }
+            
             // Open the Google Drive link directly
             if (templateLinks[type]) {
                 window.open(templateLinks[type], '_blank');
@@ -1071,6 +1086,46 @@
                 successDiv.style.transform = 'translateX(100%)';
                 setTimeout(() => document.body.removeChild(successDiv), 300);
             }, 4000);
+        }
+        
+        function showWarningMessage(message) {
+            // Create temporary warning message
+            const warningDiv = document.createElement('div');
+            warningDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #f59e0b;
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                font-weight: 600;
+                z-index: 1000;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+            `;
+            warningDiv.textContent = message;
+            document.body.appendChild(warningDiv);
+            
+            // Animate in
+            setTimeout(() => warningDiv.style.transform = 'translateX(0)', 100);
+            
+            // Remove after 4 seconds
+            setTimeout(() => {
+                warningDiv.style.transform = 'translateX(100%)';
+                setTimeout(() => document.body.removeChild(warningDiv), 300);
+            }, 4000);
+        }
+        
+        // Function to activate download buttons
+        function activateDownloadButtons() {
+            const downloadButtons = document.querySelectorAll('.download-btn');
+            downloadButtons.forEach(button => {
+                button.classList.add('active');
+            });
+            
+            showSuccessMessage('🎉 Parfait ! Vos templates gratuits sont maintenant accessibles. Utilisez les boutons rouges ci-dessus.');
         }
         
         // Rolling text animation
@@ -1127,6 +1182,38 @@
                     el.style.transform = 'translateY(0)';
                 });
             }, 100);
+            
+            // Monitor for Sender form submissions
+            const checkSenderFormInterval = setInterval(() => {
+                const senderForm = document.querySelector('.sender-form-field form');
+                if (senderForm) {
+                    // Add event listener to the form
+                    senderForm.addEventListener('submit', function(e) {
+                        // Activate download buttons after successful submission
+                        setTimeout(() => {
+                            activateDownloadButtons();
+                        }, 1500); // Small delay to allow form processing
+                    });
+                    
+                    // Stop checking once we've found and set up the form
+                    clearInterval(checkSenderFormInterval);
+                }
+            }, 1000); // Check every second
+            
+            // Also listen for successful form submissions via Sender's callback if available
+            if (typeof sender !== 'undefined') {
+                try {
+                    // This might work if Sender provides callback functionality
+                    sender('subscribe', function() {
+                        setTimeout(() => {
+                            activateDownloadButtons();
+                        }, 1000);
+                    });
+                } catch (e) {
+                    // If Sender doesn't support callbacks, the interval method above will work
+                    console.log('Sender callbacks not available, using form monitoring method');
+                }
+            }
         });
         
         // Enhanced hover effects for kit cards
@@ -1140,22 +1227,27 @@
             });
         });
         
-        // Monitor Sender form submissions
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check for Sender form every 2 seconds and add event listeners
-            const checkSenderForm = setInterval(() => {
-                const senderForm = document.querySelector('.sender-form-field form');
-                if (senderForm) {
-                    senderForm.addEventListener('submit', function(e) {
-                        // Show success message after form submission
-                        setTimeout(() => {
-                            showSuccessMessage('🎉 Parfait ! Vos templates gratuits sont maintenant accessibles. Utilisez les boutons rouges ci-dessus pour les télécharger.');
-                        }, 1000);
-                    });
-                    clearInterval(checkSenderForm);
+        // Additional fallback: Monitor for successful form submissions via DOM changes
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList') {
+                    // Check if a success message or redirect happened in the Sender form
+                    const senderField = document.querySelector('.sender-form-field');
+                    if (senderField) {
+                        const successElements = senderField.querySelectorAll('[class*="success"], [class*="thank"], .sender-success, .sender-submitted');
+                        if (successElements.length > 0) {
+                            activateDownloadButtons();
+                        }
+                    }
                 }
-            }, 2000);
+            });
         });
+        
+        // Start observing
+        const senderWrapper = document.querySelector('.sender-form-wrapper');
+        if (senderWrapper) {
+            observer.observe(senderWrapper, { childList: true, subtree: true });
+        }
     </script>
 </body>
 </html>
