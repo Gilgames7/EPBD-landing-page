@@ -6,6 +6,23 @@
     <title>EPBD Pro - Kits de Survie Énergétique Français 2025</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- SENDER JAVASCRIPT INTEGRATION -->
+    <script>
+    (function (s, e, n, d, er) {
+    s['Sender'] = er;
+    s[er] = s[er] || function () {
+    (s[er].q = s[er].q || []).push(arguments)
+    }, s[er].l = 1 * new Date();
+    var a = e.createElement(n),
+    m = e.getElementsByTagName(n)[0];
+    a.async = 1;
+    a.src = d;
+    m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', 'https://cdn.sender.net/accounts_resources/universal.js', 'sender');
+    sender('b32b8ce40b7265')
+    </script>
+    
     <style>
         * {
             margin: 0;
@@ -287,13 +304,6 @@
             box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3);
             position: relative;
             overflow: hidden;
-            opacity: 0.6;
-            pointer-events: none;
-        }
-        
-        .download-btn.active {
-            opacity: 1;
-            pointer-events: all;
         }
         
         .download-btn::before {
@@ -307,11 +317,11 @@
             transition: left 0.5s;
         }
         
-        .download-btn.active:hover::before {
+        .download-btn:hover::before {
             left: 100%;
         }
         
-        .download-btn.active:hover {
+        .download-btn:hover {
             background: #b91c1c;
             transform: translateY(-3px);
             box-shadow: 0 12px 30px rgba(220, 38, 38, 0.4);
@@ -327,65 +337,74 @@
             margin-left: 5px;
         }
         
-        /* EMAIL CAPTURE FORM */
-        .email-form {
+        /* SENDER FORM STYLING */
+        .sender-form-wrapper {
             background: rgba(255,255,255,0.15);
             backdrop-filter: blur(10px);
             padding: 30px;
             border-radius: 20px;
             border: 2px solid rgba(255,255,255,0.2);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
+            margin: 30px 0;
         }
         
-        .email-input {
-            padding: 18px 25px;
-            font-size: 16px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 50px;
-            background: rgba(255,255,255,0.9);
-            color: var(--dark-gray);
-            width: 100%;
-            max-width: 400px;
-            transition: all 0.3s ease;
-            outline: none;
+        /* Style Sender form to match your design */
+        .sender-form-field {
+            text-align: center !important;
         }
         
-        .email-input:focus {
-            border-color: var(--white);
-            background: var(--white);
-            box-shadow: 0 0 20px rgba(255,255,255,0.3);
+        /* Override Sender's default styles to match your design */
+        .sender-form-field input[type="email"],
+        .sender-form-field input[type="text"] {
+            padding: 18px 25px !important;
+            font-size: 16px !important;
+            border: 2px solid rgba(255,255,255,0.3) !important;
+            border-radius: 50px !important;
+            background: rgba(255,255,255,0.9) !important;
+            color: var(--dark-gray) !important;
+            width: 100% !important;
+            max-width: 400px !important;
+            margin: 10px auto !important;
+            display: block !important;
+            transition: all 0.3s ease !important;
+            outline: none !important;
         }
         
-        .email-input.valid {
-            border-color: var(--primary-green);
-            background: rgba(16, 185, 129, 0.1);
+        .sender-form-field input[type="email"]:focus,
+        .sender-form-field input[type="text"]:focus {
+            border-color: var(--white) !important;
+            background: var(--white) !important;
+            box-shadow: 0 0 20px rgba(255,255,255,0.3) !important;
         }
         
-        .email-input.invalid {
-            border-color: var(--primary-red);
-            background: rgba(220, 38, 38, 0.1);
+        .sender-form-field button,
+        .sender-form-field input[type="submit"] {
+            background: var(--white) !important;
+            color: var(--primary-green) !important;
+            padding: 18px 40px !important;
+            border: none !important;
+            border-radius: 50px !important;
+            font-size: 18px !important;
+            font-weight: 700 !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+            margin: 20px auto 10px !important;
+            display: block !important;
         }
         
-        .submit-btn {
-            background: var(--white);
-            color: var(--primary-green);
-            padding: 18px 40px;
-            border: none;
-            border-radius: 50px;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        .sender-form-field button:hover,
+        .sender-form-field input[type="submit"]:hover {
+            background: var(--light-gray) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15) !important;
         }
         
-        .submit-btn:hover {
-            background: var(--light-gray);
-            transform: translateY(-2px);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        .form-disclaimer {
+            font-size: 14px;
+            opacity: 0.8;
+            text-align: center;
+            margin-top: 15px;
+            color: var(--white);
         }
         
         /* EXPERT CREDENTIALS */
@@ -709,12 +728,8 @@
                 grid-template-columns: 1fr;
             }
             
-            .email-form {
+            .sender-form-wrapper {
                 padding: 25px;
-            }
-            
-            .email-input {
-                padding: 15px 20px;
             }
             
             .expert-section {
@@ -827,7 +842,7 @@
     </section>
     
     <main class="main-container">
-        <!-- ENHANCED LEAD MAGNET SECTION -->
+        <!-- ENHANCED LEAD MAGNET SECTION WITH SENDER INTEGRATION -->
         <section class="lead-magnet fade-in">
             <div class="lead-content">
                 <div class="free-badge">🎁 100% GRATUIT 🎁</div>
@@ -857,38 +872,30 @@
                 
                 <div class="download-section">
                     <div class="download-buttons">
-                        <button class="download-btn" id="notificationBtn" onclick="downloadTemplate('notification')">
+                        <button class="download-btn" onclick="downloadTemplate('notification')">
                             <i class="fas fa-file-pdf"></i>
                             Template Notification
                             <span class="free-indicator">GRATUIT</span>
                         </button>
-                        <button class="download-btn" id="anahBtn" onclick="downloadTemplate('anah')">
+                        <button class="download-btn" onclick="downloadTemplate('anah')">
                             <i class="fas fa-university"></i>
                             Template ANAH
                             <span class="free-indicator">GRATUIT</span>
                         </button>
-                        <button class="download-btn" id="communicationBtn" onclick="downloadTemplate('communication')">
+                        <button class="download-btn" onclick="downloadTemplate('communication')">
                             <i class="fas fa-comments"></i>
                             Template Communication
                             <span class="free-indicator">GRATUIT</span>
                         </button>
                     </div>
                     
-                    <form class="email-form" id="leadForm">
-                        <input 
-                            type="email" 
-                            class="email-input" 
-                            placeholder="Votre email professionnel" 
-                            required
-                            id="emailInput"
-                        >
-                        <button type="submit" class="submit-btn">
-                            <i class="fas fa-download"></i> &nbsp; Télécharger Gratuitement
-                        </button>
-                        <div style="font-size: 14px; opacity: 0.8; text-align: center;">
+                    <!-- SENDER FORM INTEGRATION -->
+                    <div class="sender-form-wrapper">
+                        <div style="text-align: center" class="sender-form-field" data-sender-form-id="ejRBpv"></div>
+                        <div class="form-disclaimer">
                             🔒 Aucun spam. Vous pouvez vous désinscrire à tout moment.
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </section>
@@ -1018,18 +1025,7 @@
         };
         
         function downloadTemplate(type) {
-            const emailInput = document.getElementById('emailInput');
-            const email = emailInput.value;
-            
-            // Check if email is valid
-            if (!isValidEmail(email)) {
-                emailInput.focus();
-                emailInput.classList.add('invalid');
-                alert('⚠️ Veuillez saisir une adresse email valide pour accéder aux templates gratuits.');
-                return;
-            }
-            
-            // Open the Google Drive link
+            // Open the Google Drive link directly
             if (templateLinks[type]) {
                 window.open(templateLinks[type], '_blank');
                 
@@ -1076,65 +1072,6 @@
                 setTimeout(() => document.body.removeChild(successDiv), 300);
             }, 4000);
         }
-        
-        function isValidEmail(email) {
-            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-        }
-        
-        // Email validation and button activation
-        document.getElementById('emailInput').addEventListener('input', function() {
-            const email = this.value;
-            const downloadButtons = document.querySelectorAll('.download-btn');
-            
-            if (isValidEmail(email)) {
-                this.classList.remove('invalid');
-                this.classList.add('valid');
-                downloadButtons.forEach(btn => btn.classList.add('active'));
-            } else {
-                this.classList.remove('valid');
-                if (email.length > 0) {
-                    this.classList.add('invalid');
-                } else {
-                    this.classList.remove('invalid');
-                }
-                downloadButtons.forEach(btn => btn.classList.remove('active'));
-            }
-        });
-        
-        // Enhanced form submission
-        document.getElementById('leadForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('emailInput').value;
-            const submitBtn = document.querySelector('.submit-btn');
-            
-            if (!isValidEmail(email)) {
-                document.getElementById('emailInput').focus();
-                return;
-            }
-            
-            // Loading state
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> &nbsp; Préparation...';
-            submitBtn.disabled = true;
-            
-            // Simulate processing
-            setTimeout(() => {
-                // Success message
-                submitBtn.innerHTML = '<i class="fas fa-check"></i> &nbsp; Envoyé !';
-                submitBtn.style.background = 'var(--primary-green)';
-                
-                // Show success message
-                alert('🎉 Parfait ! Vos templates gratuits sont maintenant accessibles. Utilisez les boutons rouges ci-dessus pour les télécharger.');
-                
-                // Reset form
-                setTimeout(() => {
-                    submitBtn.innerHTML = '<i class="fas fa-download"></i> &nbsp; Télécharger Gratuitement';
-                    submitBtn.disabled = false;
-                    submitBtn.style.background = 'var(--white)';
-                }, 3000);
-                
-            }, 2000);
-        });
         
         // Rolling text animation
         const rollingTexts = [
@@ -1201,6 +1138,23 @@
             card.addEventListener('mouseleave', function() {
                 this.style.transform = 'translateY(0) scale(1)';
             });
+        });
+        
+        // Monitor Sender form submissions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check for Sender form every 2 seconds and add event listeners
+            const checkSenderForm = setInterval(() => {
+                const senderForm = document.querySelector('.sender-form-field form');
+                if (senderForm) {
+                    senderForm.addEventListener('submit', function(e) {
+                        // Show success message after form submission
+                        setTimeout(() => {
+                            showSuccessMessage('🎉 Parfait ! Vos templates gratuits sont maintenant accessibles. Utilisez les boutons rouges ci-dessus pour les télécharger.');
+                        }, 1000);
+                    });
+                    clearInterval(checkSenderForm);
+                }
+            }, 2000);
         });
     </script>
 </body>
