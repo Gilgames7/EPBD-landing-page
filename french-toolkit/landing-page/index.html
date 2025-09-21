@@ -181,6 +181,27 @@
             line-height: 1.1;
         }
         
+        /* FREE BADGE */
+        .free-badge {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--white);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: freePulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes freePulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(255,255,255,0.3); }
+            50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(255,255,255,0.5); }
+        }
+        
         /* ENHANCED VALUE BREAKDOWN */
         .value-showcase {
             background: rgba(255,255,255,0.15);
@@ -236,7 +257,7 @@
             font-size: 20px;
         }
         
-        /* DOWNLOAD BUTTONS */
+        /* DOWNLOAD BUTTONS - ENHANCED */
         .download-section {
             margin: 40px 0;
         }
@@ -266,6 +287,13 @@
             box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3);
             position: relative;
             overflow: hidden;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        .download-btn.active {
+            opacity: 1;
+            pointer-events: all;
         }
         
         .download-btn::before {
@@ -279,14 +307,24 @@
             transition: left 0.5s;
         }
         
-        .download-btn:hover::before {
+        .download-btn.active:hover::before {
             left: 100%;
         }
         
-        .download-btn:hover {
+        .download-btn.active:hover {
             background: #b91c1c;
             transform: translateY(-3px);
             box-shadow: 0 12px 30px rgba(220, 38, 38, 0.4);
+        }
+        
+        .free-indicator {
+            background: #10b981;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 5px;
         }
         
         /* EMAIL CAPTURE FORM */
@@ -319,6 +357,16 @@
             border-color: var(--white);
             background: var(--white);
             box-shadow: 0 0 20px rgba(255,255,255,0.3);
+        }
+        
+        .email-input.valid {
+            border-color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.1);
+        }
+        
+        .email-input.invalid {
+            border-color: var(--primary-red);
+            background: rgba(220, 38, 38, 0.1);
         }
         
         .submit-btn {
@@ -604,25 +652,6 @@
             margin-bottom: 20px;
         }
         
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin: 30px 0;
-            flex-wrap: wrap;
-        }
-        
-        .footer-link {
-            color: #60a5fa;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-        
-        .footer-link:hover {
-            color: var(--white);
-        }
-        
         .footer-email {
             font-size: 18px;
             margin: 20px 0;
@@ -750,11 +779,6 @@
             .footer {
                 padding: 30px 20px;
             }
-            
-            .footer-links {
-                flex-direction: column;
-                gap: 15px;
-            }
         }
         
         /* ADDITIONAL ANIMATIONS */
@@ -806,7 +830,8 @@
         <!-- ENHANCED LEAD MAGNET SECTION -->
         <section class="lead-magnet fade-in">
             <div class="lead-content">
-                <h1 class="lead-title">🎁 Obtenez Immédiatement Vos Templates Professionnels</h1>
+                <div class="free-badge">🎁 100% GRATUIT 🎁</div>
+                <h1 class="lead-title">Obtenez Immédiatement Vos Templates Professionnels</h1>
                 
                 <div class="value-showcase">
                     <div class="value-header">✅ Obtenez Immédiatement (Valeur €117):</div>
@@ -832,17 +857,20 @@
                 
                 <div class="download-section">
                     <div class="download-buttons">
-                        <button class="download-btn" onclick="downloadTemplate('notification')">
+                        <button class="download-btn" id="notificationBtn" onclick="downloadTemplate('notification')">
                             <i class="fas fa-file-pdf"></i>
                             Template Notification
+                            <span class="free-indicator">GRATUIT</span>
                         </button>
-                        <button class="download-btn" onclick="downloadTemplate('anah')">
+                        <button class="download-btn" id="anahBtn" onclick="downloadTemplate('anah')">
                             <i class="fas fa-university"></i>
                             Template ANAH
+                            <span class="free-indicator">GRATUIT</span>
                         </button>
-                        <button class="download-btn" onclick="downloadTemplate('communication')">
+                        <button class="download-btn" id="communicationBtn" onclick="downloadTemplate('communication')">
                             <i class="fas fa-comments"></i>
                             Template Communication
+                            <span class="free-indicator">GRATUIT</span>
                         </button>
                     </div>
                     
@@ -858,7 +886,7 @@
                             <i class="fas fa-download"></i> &nbsp; Télécharger Gratuitement
                         </button>
                         <div style="font-size: 14px; opacity: 0.8; text-align: center;">
-                            Aucun spam. Vous pouvez vous désinscrire à tout moment.
+                            🔒 Aucun spam. Vous pouvez vous désinscrire à tout moment.
                         </div>
                     </form>
                 </div>
@@ -954,7 +982,7 @@
                         <li>✅ Guide MaPrimeRénov complet</li>
                         <li>💰 Protection contre futures réglementations</li>
                     </ul>
-                    <a href="https://payhip.com/b/9EUbDAt" class="kit-cta">
+                    <a href="https://payhip.com/b/9EUbD" class="kit-cta">
                         🛡️ Choisir Kit Protection Avenir – 57 €
                     </a>
                 </div>
@@ -974,12 +1002,6 @@
             <div class="footer-email">
                 <strong>Contact :</strong> <a href="mailto:info@epbdpro.biz">info@epbdpro.biz</a>
             </div>
-            <div class="footer-links">
-                <a href="#" class="footer-link">Mentions Légales</a>
-                <a href="#" class="footer-link">Politique de Confidentialité</a>
-                <a href="#" class="footer-link">CGV</a>
-                <a href="#" class="footer-link">Support</a>
-            </div>
             <div class="footer-copyright">
                 © 2025 EPBD Pro - Tous droits réservés | Expertise en rénovation énergétique depuis 2010<br>
                 Conforme RGPD | Made in France 🇫🇷
@@ -988,22 +1010,96 @@
     </footer>
     
     <script>
-        // Template download functionality
+        // ACTUAL Google Drive links
         const templateLinks = {
-            notification: 'YOUR_GOOGLE_DRIVE_LINK_1', // Replace with actual notification template link
-            anah: 'YOUR_GOOGLE_DRIVE_LINK_2', // Replace with actual ANAH template link
-            communication: 'YOUR_GOOGLE_DRIVE_LINK_3' // Replace with actual communication template link
+            notification: 'https://drive.google.com/file/d/1SGRZvFoqhxQ8QSiyKgsxC_oYp5nqSGfe/view?usp=drive_link',
+            anah: 'https://drive.google.com/file/d/12LgYVS7TGQHtiLYdMBjT3YHopIwyhioW/view?usp=drive_link',
+            communication: 'https://drive.google.com/file/d/19kV2IA-F9gCgiTUc2mifk2nG_06gSpHd/view?usp=drive_link'
         };
         
         function downloadTemplate(type) {
-            // Replace with actual Google Drive links
-            if (templateLinks[type] && templateLinks[type] !== 'YOUR_GOOGLE_DRIVE_LINK_1') {
+            const emailInput = document.getElementById('emailInput');
+            const email = emailInput.value;
+            
+            // Check if email is valid
+            if (!isValidEmail(email)) {
+                emailInput.focus();
+                emailInput.classList.add('invalid');
+                alert('⚠️ Veuillez saisir une adresse email valide pour accéder aux templates gratuits.');
+                return;
+            }
+            
+            // Open the Google Drive link
+            if (templateLinks[type]) {
                 window.open(templateLinks[type], '_blank');
-            } else {
-                // Placeholder for demonstration
-                alert(`Téléchargement du template ${type} - Veuillez ajouter le vrai lien Google Drive`);
+                
+                // Show success message
+                showSuccessMessage(`📄 Template ${getTemplateName(type)} ouvert ! Vérifiez votre nouvel onglet.`);
             }
         }
+        
+        function getTemplateName(type) {
+            const names = {
+                notification: 'Notification Locataires',
+                anah: 'Motivation ANAH',
+                communication: 'Communication Locataires'
+            };
+            return names[type] || type;
+        }
+        
+        function showSuccessMessage(message) {
+            // Create temporary success message
+            const successDiv = document.createElement('div');
+            successDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #10b981;
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                font-weight: 600;
+                z-index: 1000;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+            `;
+            successDiv.textContent = message;
+            document.body.appendChild(successDiv);
+            
+            // Animate in
+            setTimeout(() => successDiv.style.transform = 'translateX(0)', 100);
+            
+            // Remove after 4 seconds
+            setTimeout(() => {
+                successDiv.style.transform = 'translateX(100%)';
+                setTimeout(() => document.body.removeChild(successDiv), 300);
+            }, 4000);
+        }
+        
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+        
+        // Email validation and button activation
+        document.getElementById('emailInput').addEventListener('input', function() {
+            const email = this.value;
+            const downloadButtons = document.querySelectorAll('.download-btn');
+            
+            if (isValidEmail(email)) {
+                this.classList.remove('invalid');
+                this.classList.add('valid');
+                downloadButtons.forEach(btn => btn.classList.add('active'));
+            } else {
+                this.classList.remove('valid');
+                if (email.length > 0) {
+                    this.classList.add('invalid');
+                } else {
+                    this.classList.remove('invalid');
+                }
+                downloadButtons.forEach(btn => btn.classList.remove('active'));
+            }
+        });
         
         // Enhanced form submission
         document.getElementById('leadForm').addEventListener('submit', function(e) {
@@ -1011,6 +1107,11 @@
             
             const email = document.getElementById('emailInput').value;
             const submitBtn = document.querySelector('.submit-btn');
+            
+            if (!isValidEmail(email)) {
+                document.getElementById('emailInput').focus();
+                return;
+            }
             
             // Loading state
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> &nbsp; Préparation...';
@@ -1023,21 +1124,13 @@
                 submitBtn.style.background = 'var(--primary-green)';
                 
                 // Show success message
-                alert('🎉 Parfait ! Vos templates sont en cours de préparation. Vérifiez votre email dans quelques minutes.');
-                
-                // Auto-download all templates
-                setTimeout(() => {
-                    downloadTemplate('notification');
-                    downloadTemplate('anah');
-                    downloadTemplate('communication');
-                }, 1000);
+                alert('🎉 Parfait ! Vos templates gratuits sont maintenant accessibles. Utilisez les boutons rouges ci-dessus pour les télécharger.');
                 
                 // Reset form
                 setTimeout(() => {
                     submitBtn.innerHTML = '<i class="fas fa-download"></i> &nbsp; Télécharger Gratuitement';
                     submitBtn.disabled = false;
                     submitBtn.style.background = 'var(--white)';
-                    document.getElementById('leadForm').reset();
                 }, 3000);
                 
             }, 2000);
@@ -1108,23 +1201,6 @@
             card.addEventListener('mouseleave', function() {
                 this.style.transform = 'translateY(0) scale(1)';
             });
-        });
-        
-        // Email validation enhancement
-        document.getElementById('emailInput').addEventListener('input', function() {
-            const email = this.value;
-            const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-            
-            if (isValid) {
-                this.style.borderColor = 'var(--primary-green)';
-                this.style.background = 'rgba(16, 185, 129, 0.05)';
-            } else if (email.length > 0) {
-                this.style.borderColor = 'var(--primary-red)';
-                this.style.background = 'rgba(220, 38, 38, 0.05)';
-            } else {
-                this.style.borderColor = 'rgba(255,255,255,0.3)';
-                this.style.background = 'rgba(255,255,255,0.9)';
-            }
         });
     </script>
 </body>
