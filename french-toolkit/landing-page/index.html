@@ -472,7 +472,52 @@
             font-size: 36px;
             font-weight: 800;
             color: var(--dark-gray);
+            margin-bottom: 40px;
+        }
+        
+        /* GUARANTEE BANNER */
+        .guarantee-banner {
+            background: linear-gradient(135deg, var(--primary-blue), var(--dark-blue));
+            color: var(--white);
+            padding: 30px 40px;
+            border-radius: 20px;
+            text-align: center;
             margin-bottom: 60px;
+            box-shadow: var(--shadow-medium);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .guarantee-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%);
+            animation: rotateGuarantee 15s linear infinite;
+        }
+        
+        @keyframes rotateGuarantee {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .guarantee-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .guarantee-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .guarantee-text {
+            font-size: 20px;
+            font-weight: 600;
+            line-height: 1.4;
         }
         
         .kits-grid {
@@ -660,6 +705,51 @@
             100% { left: 100%; }
         }
         
+        /* INSTANT ACCESS SECTION */
+        .instant-access {
+            background: linear-gradient(135deg, var(--primary-green), #059669);
+            color: var(--white);
+            padding: 40px;
+            text-align: center;
+            border-radius: 20px;
+            margin: 40px 0;
+            box-shadow: var(--shadow-medium);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .instant-access::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+            animation: rotateAccess 12s linear infinite;
+        }
+        
+        @keyframes rotateAccess {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .instant-access-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .instant-access-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .instant-access-text {
+            font-size: 22px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+        
         /* FOOTER */
         .footer {
             background: var(--dark-gray);
@@ -753,6 +843,15 @@
                 font-size: 28px;
             }
             
+            .guarantee-banner {
+                padding: 25px 20px;
+                margin-bottom: 40px;
+            }
+            
+            .guarantee-text {
+                font-size: 18px;
+            }
+            
             .kits-grid {
                 grid-template-columns: 1fr;
                 gap: 30px;
@@ -770,6 +869,14 @@
                 padding: 25px 20px;
                 font-size: 20px;
                 margin: 40px 0;
+            }
+            
+            .instant-access {
+                padding: 30px 20px;
+            }
+            
+            .instant-access-text {
+                font-size: 18px;
             }
         }
         
@@ -923,9 +1030,19 @@
             </p>
         </section>
         
-        <!-- UPDATED KITS SECTION -->
+        <!-- UPDATED KITS SECTION WITH GUARANTEE -->
         <section class="kits-section">
             <h2 class="section-title scroll-reveal">Choisissez Votre Kit de Survie Énergétique</h2>
+            
+            <!-- GUARANTEE BANNER -->
+            <div class="guarantee-banner scroll-reveal">
+                <div class="guarantee-content">
+                    <div class="guarantee-icon">🛡️</div>
+                    <div class="guarantee-text">
+                        <strong>Garantie :</strong> trouvez le meilleur plan de rénovation avec au minimum le Kit Stratégie Maître ou remboursement sous 30 jours
+                    </div>
+                </div>
+            </div>
             
             <div class="kits-grid">
                 <!-- KIT 1: SURVIE IMMÉDIATE -->
@@ -1008,6 +1125,17 @@
         <!-- UPDATED URGENCY BANNER -->
         <div class="urgency-banner scroll-reveal">
             ⏰ Tarifs actuels valables jusqu'au dimanche 5 octobre
+        </div>
+        
+        <!-- NEW INSTANT ACCESS SECTION -->
+        <div class="instant-access scroll-reveal">
+            <div class="instant-access-content">
+                <div class="instant-access-icon">⚡</div>
+                <div class="instant-access-text">
+                    Accès immédiat, contenu 100 % actualisé<br>
+                    <strong>(dernière mise à jour : 18 septembre)</strong>
+                </div>
+            </div>
         </div>
     </main>
     
@@ -1133,7 +1261,7 @@
             "🚨 MaPrimeRénov réouvre le 30 septembre 2025 - Dernière chance pour les propriétaires !",
             "⚡ Classes G interdites à la location dès maintenant - Agissez vite !",
             "💰 Jusqu'à 63 000€ de subventions disponibles - Ne les manquez pas !",
-            "🏠 Évitez la dépréciation de votre patrimoine immobilier !"
+            "🏠 Évitez la dépréciation de votre patrimoire immobilier !"
         ];
         
         let currentTextIndex = 0;
