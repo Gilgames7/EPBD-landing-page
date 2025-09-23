@@ -1311,22 +1311,36 @@
                 });
             }, 100);
             
-            // Monitor for Sender form submissions
-            const checkSenderFormInterval = setInterval(() => {
-                const senderForm = document.querySelector('.sender-form-field form');
-                if (senderForm) {
-                    // Add event listener to the form
-                    senderForm.addEventListener('submit', function(e) {
-                        // Activate download buttons after successful submission
-                        setTimeout(() => {
-                            activateDownloadButtons();
-                        }, 1500); // Small delay to allow form processing
-                    });
-                    
-                    // Stop checking once we've found and set up the form
-                    clearInterval(checkSenderFormInterval);
+            // Enhanced Sender form monitoring - FIXED VERSION
+const checkSenderFormInterval = setInterval(() => {
+    const senderForm = document.querySelector('.sender-form-field form');
+    const senderField = document.querySelector('.sender-form-field');
+    
+    if (senderForm) {
+        // Add event listener to the form
+        senderForm.addEventListener('submit', function(e) {
+            console.log('Form submitted - activating buttons...');
+            setTimeout(() => {
+                activateDownloadButtons();
+            }, 2000);
+        });
+        clearInterval(checkSenderFormInterval);
+    } else if (senderField) {
+        // Also check for any input changes in the Sender field
+        const emailInputs = senderField.querySelectorAll('input[type="email"]');
+        emailInputs.forEach(input => {
+            input.addEventListener('blur', function() {
+                if (this.value.includes('@') && this.value.length > 5) {
+                    console.log('Valid email detected - activating buttons...');
+                    setTimeout(() => {
+                        activateDownloadButtons();
+                    }, 3000);
                 }
-            }, 1000); // Check every second
+            });
+        });
+    }
+}, 1000);
+
             
             // Also listen for successful form submissions via Sender's callback if available
             if (typeof sender !== 'undefined') {
