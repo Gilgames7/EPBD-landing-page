@@ -1154,120 +1154,315 @@
     </footer>
     
     <script>
-        // ACTUAL Google Drive links
-        const templateLinks = {
-            notification: 'https://drive.google.com/file/d/1SGRZvFoqhxQ8QSiyKgsxC_oYp5nqSGfe/view?usp=drive_link',
-            anah: 'https://drive.google.com/file/d/12LgYVS7TGQHtiLYdMBjT3YHopIwyhioW/view?usp=drive_link',
-            communication: 'https://drive.google.com/file/d/19kV2IA-F9gCgiTUc2mifk2nG_06gSpHd/view?usp=drive_link'
-        };
+// ACTUAL Google Drive links
+const templateLinks = {
+    notification: 'https://drive.google.com/file/d/1SGRZvFoqhxQ8QSiyKgsxC_oYp5nqSGfe/view?usp=drive_link',
+    anah: 'https://drive.google.com/file/d/12LgYVS7TGQHtiLYdMBjT3YHopIwyhioW/view?usp=drive_link',
+    communication: 'https://drive.google.com/file/d/19kV2IA-F9gCgiTUc2mifk2nG_06gSpHd/view?usp=drive_link'
+};
+
+function downloadTemplate(type) {
+    // Check if buttons are active
+    if (!document.querySelector('.download-btn').classList.contains('active')) {
+        showWarningMessage('⚠️ Veuillez d\'abord remplir le formulaire pour accéder aux templates gratuits.');
+        return;
+    }
+    
+    // Open the Google Drive link directly
+    if (templateLinks[type]) {
+        window.open(templateLinks[type], '_blank');
         
-        function downloadTemplate(type) {
-            // Check if buttons are active
-            if (!document.querySelector('.download-btn').classList.contains('active')) {
-                showWarningMessage('⚠️ Veuillez d\'abord remplir le formulaire pour accéder aux templates gratuits.');
-                return;
+        // Show success message
+        showSuccessMessage(`📄 Template ${getTemplateName(type)} ouvert ! Vérifiez votre nouvel onglet.`);
+    }
+}
+
+function getTemplateName(type) {
+    const names = {
+        notification: 'Notification Locataires',
+        anah: 'Motivation ANAH',
+        communication: 'Communication Locataires'
+    };
+    return names[type] || type;
+}
+
+function showSuccessMessage(message) {
+    // Create temporary success message
+    const successDiv = document.createElement('div');
+    successDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #10b981;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 10px;
+        font-weight: 600;
+        z-index: 1000;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+    `;
+    successDiv.textContent = message;
+    document.body.appendChild(successDiv);
+    
+    // Animate in
+    setTimeout(() => successDiv.style.transform = 'translateX(0)', 100);
+    
+    // Remove after 4 seconds
+    setTimeout(() => {
+        successDiv.style.transform = 'translateX(100%)';
+        setTimeout(() => document.body.removeChild(successDiv), 300);
+    }, 4000);
+}
+
+function showWarningMessage(message) {
+    // Create temporary warning message
+    const warningDiv = document.createElement('div');
+    warningDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #f59e0b;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 10px;
+        font-weight: 600;
+        z-index: 1000;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+    `;
+    warningDiv.textContent = message;
+    document.body.appendChild(warningDiv);
+    
+    // Animate in
+    setTimeout(() => warningDiv.style.transform = 'translateX(0)', 100);
+    
+    // Remove after 4 seconds
+    setTimeout(() => {
+        warningDiv.style.transform = 'translateX(100%)';
+        setTimeout(() => document.body.removeChild(warningDiv), 300);
+    }, 4000);
+}
+
+// Function to activate download buttons
+function activateDownloadButtons() {
+    const downloadButtons = document.querySelectorAll('.download-btn');
+    downloadButtons.forEach(button => {
+        button.classList.add('active');
+        // Visual feedback - change button appearance
+        button.style.background = '#dc2626';
+        button.style.color = 'white';
+        button.style.cursor = 'pointer';
+        button.style.transform = 'scale(1.02)';
+        button.style.boxShadow = '0 8px 25px rgba(220, 38, 38, 0.3)';
+    });
+    
+    // Store activation in localStorage so it persists
+    localStorage.setItem('downloadButtonsActive', 'true');
+    
+    showSuccessMessage('🎉 Parfait ! Vos templates gratuits sont maintenant accessibles. Utilisez les boutons rouges ci-dessus.');
+}
+
+// Check if user came from email confirmation link
+function checkEmailConfirmation() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const confirmed = urlParams.get('confirmed');
+    const subscribed = urlParams.get('subscribed');
+    const activated = urlParams.get('activated');
+    
+    if (confirmed === 'true' || subscribed === 'true' || activated === 'true') {
+        setTimeout(() => {
+            activateDownloadButtons();
+        }, 1000);
+        return true;
+    }
+    return false;
+}
+
+// Check if buttons were previously activated
+function checkStoredActivation() {
+    const wasActive = localStorage.getItem('downloadButtonsActive');
+    if (wasActive === 'true') {
+        const downloadButtons = document.querySelectorAll('.download-btn');
+        downloadButtons.forEach(button => {
+            button.classList.add('active');
+            button.style.background = '#dc2626';
+            button.style.color = 'white';
+            button.style.cursor = 'pointer';
+            button.style.transform = 'scale(1.02)';
+            button.style.boxShadow = '0 8px 25px rgba(220, 38, 38, 0.3)';
+        });
+        return true;
+    }
+    return false;
+}
+
+// Enhanced Sender form detection with multiple strategies
+function setupSenderFormMonitoring() {
+    let formFound = false;
+    let attempts = 0;
+    const maxAttempts = 30; // 30 seconds
+    
+    const findAndSetupForm = () => {
+        attempts++;
+        
+        // Strategy 1: Look for the form in the Sender field
+        const senderField = document.querySelector('.sender-form-field');
+        const senderForm = document.querySelector('.sender-form-field form');
+        const anyForm = document.querySelector('form');
+        
+        if (senderForm || anyForm) {
+            const targetForm = senderForm || anyForm;
+            console.log('Found Sender form, setting up listeners...');
+            
+            // Add submit listener
+            targetForm.addEventListener('submit', function(e) {
+                console.log('Form submitted, activating buttons...');
+                setTimeout(() => {
+                    activateDownloadButtons();
+                }, 2000); // 2 second delay for processing
+            });
+            
+            // Add input change listeners
+            const emailInput = targetForm.querySelector('input[type="email"]');
+            if (emailInput) {
+                emailInput.addEventListener('change', function() {
+                    if (this.value.includes('@')) {
+                        console.log('Email detected, preparing activation...');
+                        // Activate after a short delay when valid email is entered
+                        setTimeout(() => {
+                            if (this.value.includes('@') && this.value.length > 5) {
+                                activateDownloadButtons();
+                            }
+                        }, 3000);
+                    }
+                });
             }
             
-            // Open the Google Drive link directly
-            if (templateLinks[type]) {
-                window.open(templateLinks[type], '_blank');
+            formFound = true;
+            return;
+        }
+        
+        // Strategy 2: Look for Sender iframe or embedded content
+        if (senderField && !formFound && attempts < maxAttempts) {
+            // Check if Sender has loaded its content
+            const hasContent = senderField.innerHTML.length > 50;
+            if (hasContent) {
+                console.log('Sender content detected, monitoring for changes...');
+                // Set up mutation observer for the Sender field
+                const observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.type === 'childList') {
+                            const addedNodes = Array.from(mutation.addedNodes);
+                            const hasForm = addedNodes.some(node => 
+                                node.tagName === 'FORM' || 
+                                (node.querySelector && node.querySelector('form'))
+                            );
+                            if (hasForm) {
+                                console.log('New form detected via mutation observer');
+                                setTimeout(findAndSetupForm, 500);
+                            }
+                        }
+                    });
+                });
                 
-                // Show success message
-                showSuccessMessage(`📄 Template ${getTemplateName(type)} ouvert ! Vérifiez votre nouvel onglet.`);
+                observer.observe(senderField, { childList: true, subtree: true });
+                formFound = true;
             }
         }
         
-        function getTemplateName(type) {
-            const names = {
-                notification: 'Notification Locataires',
-                anah: 'Motivation ANAH',
-                communication: 'Communication Locataires'
-            };
-            return names[type] || type;
-        }
-        
-        function showSuccessMessage(message) {
-            // Create temporary success message
-            const successDiv = document.createElement('div');
-            successDiv.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: #10b981;
-                color: white;
-                padding: 15px 20px;
-                border-radius: 10px;
-                font-weight: 600;
-                z-index: 1000;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-                transform: translateX(100%);
-                transition: transform 0.3s ease;
-            `;
-            successDiv.textContent = message;
-            document.body.appendChild(successDiv);
-            
-            // Animate in
-            setTimeout(() => successDiv.style.transform = 'translateX(0)', 100);
-            
-            // Remove after 4 seconds
+        if (!formFound && attempts < maxAttempts) {
+            setTimeout(findAndSetupForm, 1000);
+        } else if (attempts >= maxAttempts) {
+            console.log('Could not find Sender form after 30 attempts, using fallback method');
+            // Fallback: activate buttons after 10 seconds for users who submitted email
             setTimeout(() => {
-                successDiv.style.transform = 'translateX(100%)';
-                setTimeout(() => document.body.removeChild(successDiv), 300);
-            }, 4000);
+                const userEmail = prompt('Si vous avez déjà soumis votre email, tapez-le ici pour activer les téléchargements:');
+                if (userEmail && userEmail.includes('@')) {
+                    activateDownloadButtons();
+                }
+            }, 10000);
         }
-        
-        function showWarningMessage(message) {
-            // Create temporary warning message
-            const warningDiv = document.createElement('div');
-            warningDiv.style.cssText = `
+    };
+    
+    findAndSetupForm();
+}
+
+// Emergency activation method - adds a temporary button for users
+function addEmergencyActivation() {
+    if (localStorage.getItem('downloadButtonsActive') === 'true') return;
+    
+    setTimeout(() => {
+        if (!document.querySelector('.download-btn.active')) {
+            const emergencyBtn = document.createElement('button');
+            emergencyBtn.textContent = '🔓 Cliquez ici si vous avez déjà soumis votre email';
+            emergencyBtn.style.cssText = `
                 position: fixed;
-                top: 20px;
+                bottom: 20px;
                 right: 20px;
                 background: #f59e0b;
                 color: white;
-                padding: 15px 20px;
+                padding: 12px 20px;
+                border: none;
                 border-radius: 10px;
+                cursor: pointer;
                 font-weight: 600;
                 z-index: 1000;
                 box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-                transform: translateX(100%);
-                transition: transform 0.3s ease;
+                animation: pulse 2s infinite;
             `;
-            warningDiv.textContent = message;
-            document.body.appendChild(warningDiv);
             
-            // Animate in
-            setTimeout(() => warningDiv.style.transform = 'translateX(0)', 100);
+            emergencyBtn.onclick = function() {
+                const userConfirm = confirm('Avez-vous soumis votre adresse email pour recevoir les templates gratuits?');
+                if (userConfirm) {
+                    activateDownloadButtons();
+                    document.body.removeChild(emergencyBtn);
+                }
+            };
             
-            // Remove after 4 seconds
+            document.body.appendChild(emergencyBtn);
+            
+            // Remove after 60 seconds
             setTimeout(() => {
-                warningDiv.style.transform = 'translateX(100%)';
-                setTimeout(() => document.body.removeChild(warningDiv), 300);
-            }, 4000);
+                if (document.body.contains(emergencyBtn)) {
+                    document.body.removeChild(emergencyBtn);
+                }
+            }, 60000);
         }
+    }, 15000); // Show after 15 seconds
+}
+
+// Main initialization
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Page loaded, initializing download system...');
+    
+    // Check all activation methods
+    const emailConfirmed = checkEmailConfirmation();
+    const previouslyActive = checkStoredActivation();
+    
+    if (!emailConfirmed && !previouslyActive) {
+        // Setup form monitoring
+        setupSenderFormMonitoring();
         
-        // Function to activate download buttons
-        function activateDownloadButtons() {
-            const downloadButtons = document.querySelectorAll('.download-btn');
-            downloadButtons.forEach(button => {
-                button.classList.add('active');
-            });
-            
-            showSuccessMessage('🎉 Parfait ! Vos templates gratuits sont maintenant accessibles. Utilisez les boutons rouges ci-dessus.');
-        }
-        
-        // Rolling text animation
-        const rollingTexts = [
-            "🚨 MaPrimeRénov réouvre le 30 septembre 2025 - Dernière chance pour les propriétaires !",
-            "⚡ Classes G interdites à la location dès maintenant - Agissez vite !",
-            "💰 Jusqu'à 63 000€ de subventions disponibles - Ne les manquez pas !",
-            "🏠 Évitez la dépréciation de votre patrimoire immobilier !"
-        ];
-        
-        let currentTextIndex = 0;
-        const rollingTextElement = document.getElementById('rollingText');
-        
-        function changeRollingText() {
+        // Add emergency activation as fallback
+        addEmergencyActivation();
+    }
+    
+    // Rolling text and other animations (keeping existing code)
+    const rollingTexts = [
+        "🚨 MaPrimeRénov réouvre le 30 septembre 2025 - Dernière chance pour les propriétaires !",
+        "⚡ Classes G interdites à la location dès maintenant - Agissez vite !",
+        "💰 Jusqu'à 63 000€ de subventions disponibles - Ne les manquez pas !",
+        "🏠 Évitez la dépréciation de votre patrimoine immobilier !"
+    ];
+    
+    let currentTextIndex = 0;
+    const rollingTextElement = document.getElementById('rollingText');
+    
+    function changeRollingText() {
+        if (rollingTextElement) {
             rollingTextElement.style.opacity = '0.7';
             rollingTextElement.style.transform = 'scale(0.95)';
             
@@ -1278,104 +1473,50 @@
                 rollingTextElement.style.transform = 'scale(1)';
             }, 300);
         }
-        
-        // Change text every 4 seconds
+    }
+    
+    // Change text every 4 seconds
+    if (rollingTextElement) {
         setInterval(changeRollingText, 4000);
-        
-        // Scroll reveal animation
-        function revealOnScroll() {
-            const reveals = document.querySelectorAll('.scroll-reveal');
-            
-            for (let i = 0; i < reveals.length; i++) {
-                const windowHeight = window.innerHeight;
-                const elementTop = reveals[i].getBoundingClientRect().top;
-                const elementVisible = 150;
-                
-                if (elementTop < windowHeight - elementVisible) {
-                    reveals[i].classList.add('revealed');
-                }
-            }
-        }
-        
-        window.addEventListener('scroll', revealOnScroll);
-        
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            revealOnScroll();
-            
-            // Add initial animation classes
-            setTimeout(() => {
-                document.querySelectorAll('.fade-in').forEach(el => {
-                    el.style.opacity = '1';
-                    el.style.transform = 'translateY(0)';
-                });
-            }, 100);
-            
-            // Monitor for Sender form submissions
-            const checkSenderFormInterval = setInterval(() => {
-                const senderForm = document.querySelector('.sender-form-field form');
-                if (senderForm) {
-                    // Add event listener to the form
-                    senderForm.addEventListener('submit', function(e) {
-                        // Activate download buttons after successful submission
-                        setTimeout(() => {
-                            activateDownloadButtons();
-                        }, 1500); // Small delay to allow form processing
-                    });
-                    
-                    // Stop checking once we've found and set up the form
-                    clearInterval(checkSenderFormInterval);
-                }
-            }, 1000); // Check every second
-            
-            // Also listen for successful form submissions via Sender's callback if available
-            if (typeof sender !== 'undefined') {
-                try {
-                    // This might work if Sender provides callback functionality
-                    sender('subscribe', function() {
-                        setTimeout(() => {
-                            activateDownloadButtons();
-                        }, 1000);
-                    });
-                } catch (e) {
-                    // If Sender doesn't support callbacks, the interval method above will work
-                    console.log('Sender callbacks not available, using form monitoring method');
-                }
-            }
+    }
+    
+    // Other existing animations
+    setTimeout(() => {
+        document.querySelectorAll('.fade-in').forEach(el => {
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+        });
+    }, 100);
+    
+    // Enhanced hover effects for kit cards
+    document.querySelectorAll('.kit-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-15px) scale(1.02)';
         });
         
-        // Enhanced hover effects for kit cards
-        document.querySelectorAll('.kit-card').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-15px) scale(1.02)';
-            });
-            
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0) scale(1)';
-            });
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
         });
-        
-        // Additional fallback: Monitor for successful form submissions via DOM changes
-        const observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.type === 'childList') {
-                    // Check if a success message or redirect happened in the Sender form
-                    const senderField = document.querySelector('.sender-form-field');
-                    if (senderField) {
-                        const successElements = senderField.querySelectorAll('[class*="success"], [class*="thank"], .sender-success, .sender-submitted');
-                        if (successElements.length > 0) {
-                            activateDownloadButtons();
-                        }
-                    }
-                }
-            });
-        });
-        
-        // Start observing
-        const senderWrapper = document.querySelector('.sender-form-wrapper');
-        if (senderWrapper) {
-            observer.observe(senderWrapper, { childList: true, subtree: true });
-        }
-    </script>
-</body>
-</html>
+    });
+});
+
+// Add CSS for the pulse animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    
+    .download-btn.active {
+        background: #dc2626 !important;
+        color: white !important;
+        cursor: pointer !important;
+        transform: scale(1.02) !important;
+        box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3) !important;
+        transition: all 0.3s ease !important;
+    }
+`;
+document.head.appendChild(style);
+</script>
